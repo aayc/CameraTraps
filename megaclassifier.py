@@ -174,9 +174,15 @@ def test_epoch(model: torch.nn.Module,
     #    transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),])
     #img = tfms(Image.open(pic_path)).unsqueeze(0)
 
+    feature_extractor = torch.nn.Sequential(*list(model.children())[:-1])
+    for name, param in model.named_parameters():
+        print(name, param.size())
+
     with torch.no_grad():
         for inputs, img_files in tqdm(loader):
+            print("LOOP")
             inputs = inputs.to(device, non_blocking=True)
+            print(feature_extractor(inputs))
             outputs = model(inputs)
             probs = torch.nn.functional.softmax(outputs, dim=1).cpu().numpy()
 
